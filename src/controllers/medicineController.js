@@ -17,4 +17,14 @@ const getMedicines = async (req, res) => {
   }
 };
 
-module.exports = { getMedicines };
+const getSingleMedicine = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = await MedicineModel.find({ id });
+
+    res.json(data[0]);
+  } catch (error) {}
+};
+
+module.exports = { getMedicines, getSingleMedicine };
