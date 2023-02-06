@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const morgan = require("morgan");
 const { connectDatabase } = require("./database/connect");
 const { medicineRouter } = require("./routes/medicineRouter");
 require("dotenv").config();
@@ -10,6 +11,7 @@ app = express();
 // middlewares
 app.use(express.json());
 app.use(cors());
+app.use(morgan("tiny"));
 
 app.get("/", (req, res) => {
   res.send("Server is running");
