@@ -1,5 +1,11 @@
 const { Schema, model } = require("mongoose");
 
+const variatSchema = new Schema({
+  _id: false,
+  size: String,
+  price: Number,
+});
+
 const medicineSchema = new Schema({
   id: Number,
   title: String,
@@ -13,6 +19,7 @@ const medicineSchema = new Schema({
   gender: String,
   age: String,
   image: String,
+  variants: [variatSchema],
 });
 
 const MedicineModel = model("Medicine", medicineSchema);
