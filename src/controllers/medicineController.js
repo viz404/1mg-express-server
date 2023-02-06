@@ -1,19 +1,68 @@
+const { removeDuplicate } = require("../config/helperfunctions");
 const { MedicineModel } = require("../models/medicineModel");
 
-const getMedicines = async (req, res) => {
+const getFilters = async (req, res) => {
   try {
     const { category, search } = req.query;
 
-    const searchObject = category
-      ? { category: { $regex: new RegExp(category, "i") } }
-      : { title: { $regex: new RegExp(search, "i") } };
+    let searchObject = {};
+
+    if (category) {
+      searchObject = { category: { $regex: new RegExp(category, "i") } };
+    } else if (search) {
+      searchObject = { title: { $regex: new RegExp(search, "i") } };
+    }
 
     const data = await MedicineModel.find(searchObject);
 
-    res.json(data);
+    let ages = removeDuplicate(data.map((e) => e.age));
+
+    let genders = removeDuplicate(data.map((e) => e.gender));
+
+    let brands = removeDuplicate(data.map((e) => e.brand));
+
+    return res.json({ data: { ages, genders, brands }, status: true });
   } catch (error) {
     res.status(500);
-    return res.json({ message: "server error" });
+    return res.json({ message: "server error", status: false });
+  }
+};
+
+const getMedicines = async (req, res) => {
+  try {
+    const { category, search, age, gender, brand, sort, order } = req.query;
+
+    let searchObject = {};
+    let sortObj = {};
+
+    if (category) {
+      searchObject = { category: { $regex: new RegExp(category, "i") } };
+    } else if (search) {
+      searchObject = { title: { $regex: new RegExp(search, "i") } };
+    }
+
+    if (age) {
+      searchObject.age = { $in: age.split(",") };
+    }
+
+    if (gender) {
+      searchObject.gender = { $in: gender.split(",") };
+    }
+
+    if (brand) {
+      searchObject.brand = { $in: brand.split(",") };
+    }
+
+    if (sort && order) {
+      sortObj = { [sort]: order == "asc" ? 1 : -1 };
+    }
+
+    const data = await MedicineModel.find(searchObject).sort(sortObj);
+
+    return res.json({ data, status: true });
+  } catch (error) {
+    res.status(500);
+    return res.json({ message: "server error", status: false });
   }
 };
 
@@ -23,8 +72,15 @@ const getSingleMedicine = async (req, res) => {
 
     const data = await MedicineModel.find({ id });
 
-    res.json(data[0]);
-  } catch (error) {}
+    res.json({ data: data[0], status: true });
+  } catch (error) {
+    res.status(500);
+    return res.json({ message: "server error", status: false });
+  }
 };
 
-module.exports = { getMedicines, getSingleMedicine };
+module.exports = {
+  getMedicines,
+  getSingleMedicine,
+  getFilters,
+};
