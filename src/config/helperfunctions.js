@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 const removeDuplicate = (array) => {
   const pure = [];
 
@@ -10,4 +12,12 @@ const removeDuplicate = (array) => {
   return pure;
 };
 
-module.exports = { removeDuplicate };
+const hashPassword = async (plain_password) => {
+  return await bcrypt.hash(plain_password, 4);
+};
+
+const comparePassword = async (plain_password, hashed_password) => {
+  return await bcrypt.compare(plain_password, hashed_password);
+};
+
+module.exports = { removeDuplicate, hashPassword, comparePassword };
