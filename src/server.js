@@ -1,23 +1,30 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const { connectDatabase } = require("./database/connect");
-const { medicineRouter } = require("./routes/medicineRouter");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
+
+const { connectDatabase } = require("./database/connect");
+const { productRouter } = require("./routes/productRouter");
+const { oauthRouter } = require("./routes/oauthRouter");
+const { userRouter } = require("./routes/userRouter");
 
 const PORT = process.env.PORT;
 app = express();
 
 // middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({ credentials: true, origin: process.env.CLIENT_REDIRECT_URI }));
 app.use(morgan("tiny"));
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
-app.use("/medicines", medicineRouter);
+app.use("/api/products", productRouter);
+app.use("/api/oauth/", oauthRouter);
+app.use("/api/user", userRouter);
 
 // start server
 const startServer = () => {
