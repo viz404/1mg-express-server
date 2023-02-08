@@ -6,13 +6,13 @@ const { UserModel } = require("../models/userModel");
 
 const getUserDetails = async (req, res) => {
   try {
-    const { onemg_session } = req.cookies;
+    const token = req.headers["authorization"].split(" ").pop();
 
-    if (onemg_session.length == 0) {
+    if (token.length == 0) {
       throw new Error();
     }
 
-    const user = jwt.decode(onemg_session);
+    const user = jwt.decode(token);
 
     res.json({ user, status: true });
   } catch (error) {
@@ -62,19 +62,18 @@ const loginUser = async (req, res) => {
       throw new Error("login failed");
     }
 
-    const check_password = comparePassword(password, user[0].password);
+    const check_password = await comparePassword(password, user[0].password);
 
     if (check_password == false) {
       throw new Error("login failed");
     }
 
-    const user_token = jwt.sign(
+    const token = jwt.sign(
       { name: user[0].name, email, _id: user[0]._id },
       process.env.JWT_SECRET
     );
 
-    res.cookie("onemg_session", user_token, { httpOnly: false });
-    res.json({ message: "login success", status: true });
+    res.json({ message: "login success", status: true, token });
   } catch (error) {
     res.json({ message: error.message, status: false });
   }
