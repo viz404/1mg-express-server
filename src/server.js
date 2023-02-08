@@ -8,6 +8,7 @@ const { connectDatabase } = require("./database/connect");
 const { productRouter } = require("./routes/productRouter");
 const { oauthRouter } = require("./routes/oauthRouter");
 const { userRouter } = require("./routes/userRouter");
+const { cartRouter } = require("./routes/cartRouter");
 
 const PORT = process.env.PORT;
 app = express();
@@ -18,13 +19,14 @@ app.use(cors({ credentials: true, origin: process.env.CLIENT_REDIRECT_URI }));
 app.use(morgan("tiny"));
 app.use(cookieParser());
 
+// routes
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
-
 app.use("/api/products", productRouter);
 app.use("/api/oauth/", oauthRouter);
 app.use("/api/user", userRouter);
+app.use("/api/cart", cartRouter);
 
 // start server
 const startServer = () => {
