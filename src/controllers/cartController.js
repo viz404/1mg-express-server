@@ -5,34 +5,6 @@ const addtoCart = async (req, res) => {
     const products = req.body;
     const { _id, email } = req.user;
 
-    // let userCart = await CartModel.find({ user_id: _id });
-
-    // if (userCart.length == 0) {
-    //   await CartModel.create({
-    //     user_id: _id,
-    //     user_email: email,
-    //     cart: [product],
-    //   });
-    // } else {
-    //   let cart = userCart[0].cart;
-
-    //   let checkProduct = cart.some(
-    //     (e) => e.title == product.title && e.variant == product.variant
-    //   );
-
-    //   if (checkProduct) {
-    //     let updated = cart.map((e) =>
-    //       e.title == product.title && e.variant == product.variant ? product : e
-    //     );
-
-    //     cart = updated;
-    //   } else {
-    //     cart.push(product);
-    //   }
-
-    //   await CartModel.updateOne({ user_id: _id }, { cart });
-    // }
-
     await CartModel.findOneAndUpdate(
       { user_id: _id },
       {
@@ -64,4 +36,88 @@ const getCartItems = async (req, res) => {
   }
 };
 
-module.exports = { addtoCart, getCartItems };
+const updateItemQuantity = async (req, res) => {
+  try {
+    const { product_id, variant, quantity } = req.body;
+    const { _id } = req.user;
+
+    const prevCart = await CartModel.find({
+      user_id: _id,
+      "cart.product_id": product_id,
+      "cart.variant": variant,
+    });
+
+    let negativeCheck = false;
+
+    for (let item of prevCart[0].cart) {
+      if (
+        item.product_id == product_id &&
+        item.variant == variant &&
+        item.quantity + quantity >= 1
+      ) {
+        negativeCheck = true;
+      }
+    }
+
+    if (negativeCheck) {
+      await CartModel.updateOne(
+        {
+          user_id: _id,
+          "cart.product_id": product_id,
+          "cart.variant": variant,
+        },
+        {
+          $inc: { "cart.$.quantity": quantity },
+        }
+      );
+      return res.json({ message: "cart updated", status: true });
+    }
+
+    return res.json({ message: "cart upadate failed", status: false });
+  } catch (error) {
+    return res.json({ message: "server error", status: false });
+  }
+};
+
+const deleteCartItem = async (req, res) => {
+  try {
+    const { product_id, variant } = req.body;
+    const { _id } = req.user;
+
+    const response = await CartModel.updateOne(
+      {
+        user_id: _id,
+      },
+      {
+        $pull: {
+          cart: { product_id, variant },
+        },
+      }
+    );
+
+    res.json({ message: response, status: true });
+  } catch (error) {
+    return res.json({ message: error.message, status: false });
+  }
+};
+
+const emptyCart = async (req, res) => {
+  try {
+    const { _id } = req.user;
+
+    await CartModel.deleteOne({ user_id: _id });
+
+    res.json({ message: "cart deleted", state: true });
+  } catch (error) {
+    console.log(error);
+    return res.json({ message: error.message, status: false });
+  }
+};
+
+module.exports = {
+  addtoCart,
+  getCartItems,
+  updateItemQuantity,
+  deleteCartItem,
+  emptyCart,
+};
