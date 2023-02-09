@@ -9,6 +9,7 @@ const { productRouter } = require("./routes/productRouter");
 const { oauthRouter } = require("./routes/oauthRouter");
 const { userRouter } = require("./routes/userRouter");
 const { cartRouter } = require("./routes/cartRouter");
+const { verifyUser } = require("./controllers/authController");
 
 const PORT = process.env.PORT;
 app = express();
@@ -26,7 +27,7 @@ app.get("/", (req, res) => {
 app.use("/api/products", productRouter);
 app.use("/api/oauth/", oauthRouter);
 app.use("/api/user", userRouter);
-app.use("/api/cart", cartRouter);
+app.use("/api/cart", verifyUser, cartRouter);
 
 // start server
 const startServer = () => {
