@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const { connectDatabase } = require("./database/connect");
@@ -18,7 +17,6 @@ app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan("tiny"));
-app.use(cookieParser());
 
 // routes
 app.get("/", (req, res) => {

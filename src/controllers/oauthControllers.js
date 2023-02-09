@@ -26,8 +26,7 @@ const googleOauthHandler = async (req, res) => {
 
     const user_token = jwt.sign({ name, email, _id }, process.env.JWT_SECRET);
 
-    res.cookie("onemg_session", user_token, { httpOnly: false });
-    res.redirect(process.env.CLIENT_REDIRECT_URI);
+    res.redirect(process.env.CLIENT_REDIRECT_URI + "?token=" + user_token);
   } catch (error) {
     console.log({ error: error.message });
     res.status(500);
