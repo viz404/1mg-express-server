@@ -16,6 +16,8 @@ const getUserDetails = async (req, res) => {
 
     res.json({ user, status: true });
   } catch (error) {
+    console.log({ error });
+    res.status(500);
     res.json({ message: "please login", status: false });
   }
 };
@@ -40,6 +42,8 @@ const registerUser = async (req, res) => {
 
     res.json({ message: "user registered", status: true });
   } catch (error) {
+    console.log({ error });
+    res.status(500);
     res.json({ message: error.message, status: false });
   }
 };
@@ -75,6 +79,8 @@ const loginUser = async (req, res) => {
 
     res.json({ message: "login success", status: true, token });
   } catch (error) {
+    console.log({ error });
+    res.status(500);
     res.json({ message: error.message, status: false });
   }
 };
