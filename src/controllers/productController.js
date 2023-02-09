@@ -23,7 +23,7 @@ const getFilters = async (req, res) => {
 
     return res.json({ data: { ages, genders, brands }, status: true });
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     return res.json({ message: "server error", status: false });
   }
@@ -62,7 +62,7 @@ const getproducts = async (req, res) => {
 
     return res.json({ data, status: true });
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     return res.json({ message: "server error", status: false });
   }
@@ -76,7 +76,7 @@ const getSingleproduct = async (req, res) => {
 
     res.json({ data: data[0], status: true });
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     return res.json({ message: "server error", status: false });
   }

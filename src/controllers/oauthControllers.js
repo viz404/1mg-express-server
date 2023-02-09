@@ -29,7 +29,7 @@ const googleOauthHandler = async (req, res) => {
     res.cookie("onemg_session", user_token, { httpOnly: false });
     res.redirect(process.env.CLIENT_REDIRECT_URI);
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     res.json({ message: "server error", status: false });
   }

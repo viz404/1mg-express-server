@@ -20,7 +20,7 @@ const addtoCart = async (req, res) => {
 
     return res.json({ message: "added to cart", status: true });
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     res.json({ message: error.message, status: false });
   }
@@ -34,7 +34,7 @@ const getCartItems = async (req, res) => {
 
     return res.json({ data: data[0]?.cart || [], status: true });
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     return res.json({ message: "failed to get cart", status: false });
   }
@@ -81,7 +81,7 @@ const updateItemQuantity = async (req, res) => {
       .status(400)
       .json({ message: "cart upadate failed", status: false });
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     return res.json({ message: "server error", status: false });
   }
@@ -105,7 +105,7 @@ const deleteCartItem = async (req, res) => {
 
     res.json({ message: response, status: true });
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     return res.json({ message: error.message, status: false });
   }
@@ -119,7 +119,7 @@ const emptyCart = async (req, res) => {
 
     res.json({ message: "cart deleted", state: true });
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     return res.json({ message: error.message, status: false });
   }

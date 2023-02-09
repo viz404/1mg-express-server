@@ -24,7 +24,7 @@ const verifyUser = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log({ error });
+    console.log({ error: error.message });
     res.status(500);
     return res.json({ message: "user verification failed", status: false });
   }
