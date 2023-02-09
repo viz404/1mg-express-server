@@ -16,7 +16,7 @@ app = express();
 
 // middlewares
 app.use(express.json());
-app.use(cors({ credentials: true, origin: process.env.CLIENT_REDIRECT_URI }));
+app.use(cors());
 app.use(morgan("tiny"));
 app.use(cookieParser());
 
